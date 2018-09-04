@@ -3,6 +3,7 @@
 #define twoDFmat vector<vector<double> >
 #define oneDarr vector<int>
 #define pb push_back
+#define oneDstr vector<string>
 using namespace std;
 
 void getCofactor(twoDImat &A, twoDImat &temp, int p, int q, int n)
