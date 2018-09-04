@@ -36,8 +36,40 @@ string getciphertext(vector<vector<char> > &keytable, map<char, pair<int, int> >
 	return result;
 }
 
+string getdecipheredtext(vector<vector<char> > &keytable, map<char, pair<int, int> > &alphabets, char c1, char c2) {
+	pair<int, int> pos1 = alphabets[c1], pos2 = alphabets[c2];
+	string result="";
+	
+	//check if in the same row
+	if(pos1.first == pos2.first) {
+		int cpos1 = (pos1.second-1)%MATRIX_SIZE, cpos2 = (pos2.second-1)%MATRIX_SIZE;
+		if(cpos1<0)
+			cpos1+=MATRIX_SIZE;
+		if(cpos2<0)
+			cpos2+=MATRIX_SIZE;
+		result+=keytable[pos1.first][cpos1];
+		result+=keytable[pos2.first][cpos2];
+	}
+	//or in the same column
+	else if(pos1.second == pos2.second) {
+		int cpos1 = (pos1.first-1)%MATRIX_SIZE, cpos2 = (pos2.first-1)%MATRIX_SIZE;
+		if(cpos1<0)
+			cpos1+=MATRIX_SIZE;
+		if(cpos2<0)
+			cpos2+=MATRIX_SIZE;
+		result+=keytable[cpos1][pos1.second];
+		result+=keytable[cpos2][pos2.second];
+	}
+	//or find horizontal opposites in rectangle
+	else {
+		result+=keytable[pos1.first][pos2.second];
+		result+=keytable[pos2.first][pos1.second];
+	}
+	return result;
+}
+
 int main(void) {
-	string key, plaintext, ciphertext;
+	string key, plaintext, ciphertext, decipheredtext;
 	map<char, pair<int, int> > alphabets;
 	vector<char> temp(MATRIX_SIZE, '#');
 	vector<vector<char> > keytable(MATRIX_SIZE, temp);
@@ -103,4 +135,10 @@ int main(void) {
 		ciphertext+=getciphertext(keytable, alphabets, plaintext[i], plaintext[i+1]);
 	
 	cout<<endl<<"The cipher text is "<<ciphertext<<endl<<endl;
+	cout<<"Applying reverse logic to get deciphered text.."<<endl;
+	//deciphering the cipher text
+	for(int i=0; i<ciphertext.size(); i+=2)
+		decipheredtext+=getdecipheredtext(keytable, alphabets, ciphertext[i], ciphertext[i+1]);
+		
+	cout<<endl<<"The deciphered text is "<<decipheredtext<<endl<<endl;
 }
